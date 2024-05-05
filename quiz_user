@@ -1,0 +1,118 @@
+using System;
+using System.Collections.Generic;
+
+namespace QuizManagementSystem
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Khởi tạo hệ thống quản lý
+            QuizManagementSystem quizSystem = new QuizManagementSystem();
+
+            // Hiển thị giao diện đăng nhập
+            quizSystem.LoginMenu();
+
+            // Tiếp tục xử lý hoặc hiển thị giao diện chính của ứng dụng
+            // ở đây...
+        }
+    }
+
+    class QuizManagementSystem
+    {
+        private List<User> users = new List<User>();
+        private User currentUser;
+
+        public void LoginMenu()
+        {
+            Console.WriteLine("Đăng nhập:");
+
+            Console.Write("Nhập tên đăng nhập: ");
+            string username = Console.ReadLine();
+
+            Console.Write("Nhập mật khẩu: ");
+            string password = Console.ReadLine();
+
+            // Kiểm tra tài khoản đăng nhập
+            User user = AuthenticateUser(username, password);
+
+            if (user != null)
+            {
+                currentUser = user;
+                if (currentUser.Role == UserRole.Admin)
+                {
+                    AdminMenu();
+                }
+                else if (currentUser.Role == UserRole.User)
+                {
+                    UserMenu();
+                }
+            }
+            else
+            {
+                Console.WriteLine("Tên đăng nhập hoặc mật khẩu không đúng.");
+            }
+        }
+
+        public void AdminMenu()
+        {
+            // Giao diện quản trị đã được mô tả trong câu trước
+        }
+
+        public void UserMenu()
+        {
+            // Giao diện người dùng chỉ có thể trả lời câu hỏi
+            Console.WriteLine("Menu người dùng:");
+            Console.WriteLine("1. Trả lời câu hỏi");
+            Console.WriteLine("0. Đăng xuất");
+
+            Console.Write("Chọn chức năng: ");
+            int choice = int.Parse(Console.ReadLine());
+
+            switch (choice)
+            {
+                case 1:
+                    AnswerQuestion();
+                    break;
+                case 0:
+                    currentUser = null;
+                    Console.WriteLine("Đã đăng xuất.");
+                    break;
+                default:
+                    Console.WriteLine("Lựa chọn không hợp lệ.");
+                    break;
+            }
+        }
+        public User AuthenticateUser(string username, string password)
+        {
+            foreach (User user in users)
+            {
+                if (user.Username == username && user.Password == password)
+                {
+                    return user;
+                }
+            }
+            return null;
+        }
+    }
+
+    enum UserRole
+    {
+        Admin,
+        User
+    }
+
+    class User
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public UserRole Role { get; set; }
+
+        public User(string username, string password, UserRole role)
+        {
+            Username = username;
+            Password = password;
+            Role = role;
+        }
+    }
+}
