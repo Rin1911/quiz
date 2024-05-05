@@ -1,0 +1,154 @@
+using System;
+using System.Collections.Generic;
+
+namespace QuizManagementSystem
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Khởi tạo hệ thống quản lý
+            QuizManagementSystem quizSystem = new QuizManagementSystem();
+
+            // Đăng nhập với tài khoản admin
+            User admin = new User("admin", "admin"); // Tài khoản admin mặc định
+            quizSystem.Login(admin);
+
+            // Hiển thị giao diện quản lý
+            quizSystem.AdminMenu();
+
+            // Tiếp tục xử lý hoặc hiển thị giao diện chính của ứng dụng
+            // ở đây...
+        }
+    }
+
+    class QuizManagementSystem
+    {
+        private List<User> users = new List<User>();
+
+        private User currentUser;
+
+        public void Login(User user)
+        {
+            currentUser = user;
+        }
+
+        public void AdminMenu()
+        {
+            // Kiểm tra quyền truy cập của người dùng hiện tại
+            if (currentUser == null || currentUser.Username != "admin")
+            {
+                Console.WriteLine("Bạn không có quyền truy cập vào menu quản trị.");
+                return;
+            }
+
+            Console.WriteLine("Menu quản trị:");
+            Console.WriteLine("1. Thêm tài khoản");
+            Console.WriteLine("2. Sửa thông tin tài khoản");
+            Console.WriteLine("3. Xóa tài khoản");
+            Console.WriteLine("0. Đăng xuất");
+
+            Console.Write("Chọn chức năng: ");
+            int choice = int.Parse(Console.ReadLine());
+
+            switch (choice)
+            {
+                case 1:
+                    Register();
+                    break;
+                case 2:
+                    UpdateUser();
+                    break;
+                case 3:
+                    DeleteUser();
+                    break;
+                case 0:
+                    currentUser = null;
+                    Console.WriteLine("Đã đăng xuất.");
+                    break;
+                default:
+                    Console.WriteLine("Lựa chọn không hợp lệ.");
+                    break;
+            }
+        }
+
+        public void Register()
+        {
+            // Phương thức đăng ký tài khoản đã được mô tả trong câu trước
+
+            // Cập nhật sau khi đăng ký
+            AdminMenu(); // Quay lại menu quản trị sau khi đăng ký
+        }
+
+        public void UpdateUser()
+        {
+            Console.Write("Nhập tên đăng nhập của người dùng cần cập nhật: ");
+            string username = Console.ReadLine();
+
+            // Tìm người dùng trong danh sách
+            User userToUpdate = FindUserByUsername(username);
+
+            if (userToUpdate == null)
+            {
+                Console.WriteLine("Không tìm thấy người dùng có tên đăng nhập này.");
+                AdminMenu(); // Quay lại menu quản trị nếu không tìm thấy người dùng
+                return;
+            }
+
+            Console.Write("Nhập mật khẩu mới: ");
+            string newPassword = Console.ReadLine();
+
+            // Cập nhật mật khẩu
+            userToUpdate.Password = newPassword;
+
+            Console.WriteLine("Thông tin người dùng đã được cập nhật thành công.");
+            AdminMenu(); // Quay lại menu quản trị sau khi cập nhật
+        }
+
+        public void DeleteUser()
+        {
+            Console.Write("Nhập tên đăng nhập của người dùng cần xóa: ");
+            string username = Console.ReadLine();
+
+            // Tìm người dùng trong danh sách
+            User userToDelete = FindUserByUsername(username);
+
+            if (userToDelete == null)
+            {
+                Console.WriteLine("Không tìm thấy người dùng có tên đăng nhập này.");
+                AdminMenu(); // Quay lại menu quản trị nếu không tìm thấy người dùng
+                return;
+            }
+
+            // Xóa người dùng khỏi danh sách
+            users.Remove(userToDelete);
+
+            Console.WriteLine("Người dùng đã được xóa thành công.");
+            AdminMenu(); // Quay lại menu quản trị sau khi xóa
+        }
+
+        private User FindUserByUsername(string username)
+        {
+            foreach (User user in users)
+            {
+                if (user.Username == username)
+                {
+                    return user;
+                }
+            }
+            return null;
+        }
+    }
+
+    class User
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+
+        public User(string username, string password)
+        {
+            Username = username;
+            Password = password;
+        }
+    }
+}
